@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,6 +28,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Override from environment (Docker/.env)
+SECRET_KEY = os.getenv("SECRET_KEY", SECRET_KEY)
+DEBUG = os.getenv("DEBUG", "True") == "True"
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+
 
 # Application definition
 
@@ -37,6 +43,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'users',
+    'appointments',
+    'medical_records',
+    'notifications',
+    'payments',
+    'analytics',
 ]
 
 MIDDLEWARE = [
@@ -71,14 +83,19 @@ WSGI_APPLICATION = "healthconnect_pro.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv('POSTGRES_DB', 'healthconnect_pro'),
+        "USER": os.getenv('POSTGRES_USER', 'healthconnect_user'),
+        "PASSWORD": os.getenv('POSTGRES_PASSWORD', 'healthconnect_password'),
+        "HOST": os.getenv('POSTGRES_HOST', 'localhost'), 
+        "PORT": os.getenv('POSTGRES_PORT', '5432'),      
     }
 }
 
+# Custom User Model
+AUTH_USER_MODEL = 'users.User'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
