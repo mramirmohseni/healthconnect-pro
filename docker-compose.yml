@@ -34,6 +34,23 @@ services:
       timeout: 5s
       retries: 5
 
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: healthconnect_web
+    env_file: .env
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - healthconnect_postgres
+      - healthconnect_redis
+    networks:
+      - healthconnect_network
+    command: sh -c "python src/manage.py migrate && python src/manage.py runserver 0.0.0.0:8000"
+
 volumes:
   healthconnect_postgres:
     external: true
