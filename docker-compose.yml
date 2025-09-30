@@ -9,7 +9,6 @@ services:
       - "5432:5432"
     volumes:
       - healthconnect_postgres:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - healthconnect_network
     restart: unless-stopped
